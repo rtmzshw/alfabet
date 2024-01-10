@@ -6,15 +6,14 @@ from geoalchemy2 import Geometry
 from datetime import datetime
 from postgrese import Base
 
-EVENT_TABLE = 'events'
-class EventSchema(Base):
+EVENT_TABLE = 'users'
+
+class UserSchema(Base):
     __tablename__ = EVENT_TABLE
     id = Column(Integer(), primary_key=True)
-    name = Column(String(100), nullable=False)
-    venue = Column(String(100), nullable=False)
-    location = Column(Geometry('POINT'), nullable=False)
-    date = Column(DateTime(), nullable=False)
-    popularity = Column(Integer(), nullable=False)
+    email = Column(String(100), nullable=False)
+    password = Column(String(300), nullable=False)
     creation_date = Column(DateTime(), nullable=False, default=datetime.now)
-    
-Index('name_date_venue', EventSchema.name, EventSchema.date, EventSchema.venue, unique=True)
+
+
+Index('email', UserSchema.email, unique=True)

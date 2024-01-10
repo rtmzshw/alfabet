@@ -1,36 +1,36 @@
 from datetime import date as dateType
 from pydantic import BaseModel
-import json
+from typing import Annotated
+from typing import List, Union
+from fastapi import Query
 
 class EventCreationRequest(BaseModel):
-    def __init__(self, name: str, venue: str, date: dateType, popularity: int):
-        super().__init__()
-        self.name = name
-        self.venue = venue
-        self.date = date
-        self.popularity = popularity
-        
     name: str
     venue: str
     date: dateType
+    location: tuple
     popularity: int
 
 class Event(EventCreationRequest):
-    def __init__(self, eventCreationReq: EventCreationRequest, id: str, creation_date: dateType):
-        super().__init__(eventCreationReq.name,eventCreationReq.venue, eventCreationReq.date,eventCreationReq.popularity )
-        self.id = id
-        self.creation_date = creation_date
-
-    id: str
+    id: int
     creation_date: dateType
+    location: str
 
-    def toJson(self):
-        return json.dumps(self, default=lambda o: o.__dict__)
-    
-    # def fromArrayToJson(properties):
-    #     return {'id': properties[0],
-    #             'name': properties[1],
-    #             'venue': properties[2],
-    #             'date': properties[2],
-    #             'popularity': properties[2],
-    #             'creation_date': properties[2]}
+
+
+class EventUpdateRequest(EventCreationRequest):
+    name: str | None = None
+    venue: str | None = None
+    date: dateType | None = None
+    popularity: int | None = None
+    location: tuple | None = None
+
+
+class QueryOptions(BaseModel):
+    venue: str | None = None
+
+
+class SortingOptions(BaseModel):
+    date: int | None = None
+    popularity: int | None = None
+    creation_time: int | None = None

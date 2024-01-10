@@ -1,12 +1,19 @@
-import psycopg2
+from sqlalchemy import create_engine
+from sqlalchemy.engine import URL
+from sqlalchemy.orm import declarative_base
 
-conn = psycopg2.connect(database="postgres", password="alfabet" ,user="postgres", )
-conn.autocommit = True
+url = URL.create(
+    drivername="postgresql",
+    username="postgres",
+    database="postgres",
+    password="alfabet"
+)
 
-def exec_query(sql: str):
-    cursor = conn.cursor()
-    print(sql)
-    cursor.execute(sql)
-    response = cursor.fetchone()
-    cursor.close()
-    return response
+engine = create_engine(url)
+connection = engine.connect()
+
+Base = declarative_base()
+
+def init_db():
+    Base.metadata.create_all(bind=engine)
+    print("Initialized the db")
