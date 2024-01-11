@@ -1,5 +1,6 @@
 from pypika import Query, Table, Schema
 from event.eventSchema import EventSchema
+from notification.notificationSchema import NotificationSchema
 from event.eventTypes import Event, EventCreationRequest, EventUpdateRequest, SortingOptions, QueryOptions
 from postgrese import engine
 from datetime import datetime
@@ -10,14 +11,18 @@ from typing import List
 from sqlalchemy import func
 from geoalchemy2.elements import WKTElement
 from geoalchemy2.functions import ST_Point
-
-
-def add_event(event: EventCreationRequest):
+from errors import Unauthorized, NotFound
+from datetime import datetime, timedelta
+from notification.notificationLogic import calc_notification_timing
+def add_event(event: EventCreationRequest, user_id: str):
     Session = sessionmaker(bind=engine)
     with Session() as session:
-        event_to_create = EventSchema(name=event.name, venue=event.venue,
+        event_to_create = EventSchema(name=event.name, venue=event.venue, user_id=user_id,
                                       date=event.date, popularity=event.popularity, location=convert_to_point(event.location))
         session.add(event_to_create)
+        print(calc_notification_timing(event.date))
+        notification = NotificationSchema(description="bla",date=calc_notification_timing(event.date), event_id=event_to_create.id)
+        session.add(notification)
         session.commit()
         return event_to_create.id
 
@@ -58,23 +63,37 @@ def get_events(query_options: QueryOptions, location: List[float] | None, sortin
         return events
 
 
-def delete_event(event_id: str):
+def delete_event(event_id: str, user_id: str):
     Session = sessionmaker(bind=engine)
     with Session() as session:
-        res = session.query(EventSchema).filter_by(id=event_id).delete()
+        event = session.query(EventSchema).filter_by(id=event_id).one()
+        if not event:
+            raise NotFound()
+
+        if event.user_id != user_id:
+            raise Unauthorized()
+
+        session.query(EventSchema).filter_by(id=event_id).delete()
         session.commit()
-        return bool(res)
 
 # TODO try to improve any
-def update_event(event_id: str, event_update_request: dict[str, any]):
+
+
+def update_event(event_id: str, event_update_request: dict[str, any], user_id: str):
     # TODO location dosent include 2 cells
-    if('location' in event_update_request):
-        event_update_request["location"] = convert_to_point(event_update_request["location"])
-        
+    if ('location' in event_update_request):
+        event_update_request["location"] = convert_to_point(
+            event_update_request["location"])
+
     Session = sessionmaker(bind=engine)
     with Session() as session:
-        res = session.query(EventSchema).filter_by(
+        event = session.query(EventSchema).filter_by(id=event_id).one()
+        if not event:
+            raise NotFound()
+
+        if event.user_id != user_id:
+            raise Unauthorized()
+
+        session.query(EventSchema).filter_by(
             id=event_id).update(values=event_update_request)
         session.commit()
-
-        return bool(res)

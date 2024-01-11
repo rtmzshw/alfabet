@@ -4,13 +4,13 @@ from user.userDal import add_user, get_user
 from user.userUtils import create_jwt, hash_password
 from sqlalchemy.exc import IntegrityError
 from fastapi.responses import JSONResponse
-
-app = FastAPI(root_path="/")
+from responses import not_found, unauthorized, conflict
+app = FastAPI(root_path="/user")
 
 # TODO logging
 
 
-@app.post("/signup")
+@app.post("/signup", responses={**conflict})
 async def signup(user: UserCreationRequest):
     try:
         user.password = hash_password(user.password)
@@ -19,12 +19,12 @@ async def signup(user: UserCreationRequest):
 
         return {"token": jwt}
     except IntegrityError:
-        return JSONResponse(status_code=400, content={'detail': "email already exist", })
-    except Exception:
-        return JSONResponse(status_code=500)
+        return JSONResponse(status_code=409, content={'detail': "email already exist", })
+    except Exception as e:
+        return JSONResponse(status_code=500, content={'detail': "internal server error", })
 
 
-@app.post("/login")
+@app.post("/login", responses={**not_found})
 async def get_event_by_id(user_login_request: UserLoginRequest):
     user_login_request.password = hash_password(user_login_request.password)
     user_id = get_user(user_login_request)

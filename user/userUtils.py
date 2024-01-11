@@ -12,7 +12,6 @@ def create_jwt(user_id: int, user_email: str):
     }
     
     token = jwt.encode(payload, JWT_SECRET_KEY, algorithm=jwt_algorithem)
-    print(b)
     return token
 
 def verify_jwt(token:str):

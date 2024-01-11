@@ -24,6 +24,11 @@ async def log_decorator(request: Request, call_next):
 
 
 async def authenticate(request: Request, call_next):
+    
+    # Skip the middleware logic for docs
+    if("openapi.json" in request.url.path or "docs" in request.url.path):
+        return await call_next(request)
+    
     if(not "Authorization" in request.headers):
         return JSONResponse(status_code=401, content="No authorization token")
     

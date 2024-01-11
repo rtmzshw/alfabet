@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 from pydantic import BaseModel, Field
 from typing import Union
 
@@ -13,4 +13,4 @@ class UserLoginRequest(BaseModel):
     
 class User(UserCreationRequest):
     id: int
-    creation_date: date
+    creation_date: datetime
