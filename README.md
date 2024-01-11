@@ -7,3 +7,5 @@ docker run --name my-pgadmin -p 5050:80 -e 'PGADMIN_DEFAULT_EMAIL=rtmzshw@gmail.
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' alfabet-postgres 
 
 docker run --name alfabet-postgres -p 5432:5432 -e POSTGRES_PASSWORD=alfabet -d postgis/postgis
+
+pytest

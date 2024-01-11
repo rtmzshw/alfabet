@@ -28,6 +28,7 @@ async def create_event(event: EventCreationRequest, request: Request):
         event_id = add_event(event, request.state.user_id)
         return {"id": event_id}
     except IntegrityError as e:
+        print(e)
         return JSONResponse(status_code=409, content={
             'detail': "Event already exist", })
 
@@ -64,9 +65,9 @@ async def delete_event_by_id(event_id: int, request: Request):
     try:
         delete_event(event_id, request.state.user_id)
     except Unauthorized:
-        raise HTTPException(status_code=401)
+        return JSONResponse(status_code=404, content={'detail': "Unautorized", })
     except NotFound:
-        raise HTTPException(status_code=404)
+        return JSONResponse(status_code=404, content={'detail': "Not found", })
 
     return {"ok": True}
 

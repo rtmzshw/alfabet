@@ -20,7 +20,6 @@ def add_event(event: EventCreationRequest, user_id: str):
         event_to_create = EventSchema(name=event.name, venue=event.venue, user_id=user_id,
                                       date=event.date, popularity=event.popularity, location=convert_to_point(event.location))
         session.add(event_to_create)
-        print(calc_notification_timing(event.date))
         notification = NotificationSchema(description="bla",date=calc_notification_timing(event.date), event_id=event_to_create.id)
         session.add(notification)
         session.commit()
@@ -66,7 +65,7 @@ def get_events(query_options: QueryOptions, location: List[float] | None, sortin
 def delete_event(event_id: str, user_id: str):
     Session = sessionmaker(bind=engine)
     with Session() as session:
-        event = session.query(EventSchema).filter_by(id=event_id).one()
+        event = session.query(EventSchema).filter_by(id=event_id).first()
         if not event:
             raise NotFound()
 
@@ -76,9 +75,9 @@ def delete_event(event_id: str, user_id: str):
         session.query(EventSchema).filter_by(id=event_id).delete()
         session.commit()
 
+
+
 # TODO try to improve any
-
-
 def update_event(event_id: str, event_update_request: dict[str, any], user_id: str):
     # TODO location dosent include 2 cells
     if ('location' in event_update_request):
@@ -87,7 +86,7 @@ def update_event(event_id: str, event_update_request: dict[str, any], user_id: s
 
     Session = sessionmaker(bind=engine)
     with Session() as session:
-        event = session.query(EventSchema).filter_by(id=event_id).one()
+        event = session.query(EventSchema).filter_by(id=event_id).first()
         if not event:
             raise NotFound()
 
