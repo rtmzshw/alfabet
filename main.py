@@ -9,7 +9,7 @@ from utils import set_interval
 from notification.notificationLogic import register_notifications
 app = FastAPI()
     
-# event_app.add_middleware(BaseHTTPMiddleware, dispatch=authenticate)
+event_app.add_middleware(BaseHTTPMiddleware, dispatch=authenticate)
 event_app.add_middleware(BaseHTTPMiddleware, dispatch=log_decorator)
 user_app.add_middleware(BaseHTTPMiddleware, dispatch=log_decorator)
 app.mount("/event",event_app)

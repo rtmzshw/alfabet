@@ -9,7 +9,6 @@ url = URL.create(
     password=settings.db_password,
     host=settings.db_host
 )
-print(url)
 engine = create_engine(url)
 connection = engine.connect()
 
