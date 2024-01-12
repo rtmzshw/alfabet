@@ -24,7 +24,6 @@ def get_user(user_login_request: UserLoginRequest):
     with Session() as session:
         user = session.query(UserSchema).filter_by(
             email=user_login_request.email, password=user_login_request.password).first()
-        
         if (not user):
             return None
         

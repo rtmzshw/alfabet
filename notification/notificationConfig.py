@@ -1,0 +1,2 @@
+notification_offset_in_minutes = 30
+notification_poller_in_seconds = 60

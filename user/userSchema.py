@@ -13,7 +13,5 @@ class UserSchema(Base):
     email = Column(String(100), nullable=False,)
     password = Column(String(300), nullable=False)
     creation_date = Column(DateTime(), nullable=False, default=datetime.now)
-    # events = relationship('EventSchema', back_populates='user')
-
 
 Index('email', UserSchema.email, unique=True)

@@ -1,6 +1,6 @@
 import time
 
-from fastapi import Request, HTTPException
+from fastapi import Request, HTTPException, Response
 from logger.logger import log_info, log_error
 from user.userUtils import verify_jwt
 from fastapi.responses import JSONResponse
@@ -10,7 +10,7 @@ async def log_decorator(request: Request, call_next):
         start_time = time.time()
         log_info("started handeling", {
                  "url": request.url})
-        response = await call_next(request)
+        response:Response = await call_next(request)
     except Exception as e:
         process_time = time.time() - start_time
         log_error(e, "failed handeling", {
@@ -19,7 +19,8 @@ async def log_decorator(request: Request, call_next):
 
     process_time = time.time() - start_time
     log_info("success handeling", {
-             "url": request.url, "process_time": process_time})
+             "url": request.url, "process_time": process_time,
+             "status": response.status_code})
     return response
 
 

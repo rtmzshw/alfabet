@@ -14,13 +14,15 @@ from geoalchemy2.functions import ST_Point
 from errors import Unauthorized, NotFound
 from datetime import datetime, timedelta
 from notification.notificationLogic import calc_notification_timing
+from event.eventConfig import default_query_radius
 def add_event(event: EventCreationRequest, user_id: str):
     Session = sessionmaker(bind=engine)
     with Session() as session:
         event_to_create = EventSchema(name=event.name, venue=event.venue, user_id=user_id,
                                       date=event.date, popularity=event.popularity, location=convert_to_point(event.location))
         session.add(event_to_create)
-        notification = NotificationSchema(description="bla",date=calc_notification_timing(event.date), event_id=event_to_create.id)
+        # TODO: add description
+        notification = NotificationSchema(description="example: should be recived from user",date=calc_notification_timing(event.date), event_id=event_to_create.id)
         session.add(notification)
         session.commit()
         return event_to_create.id
@@ -34,6 +36,7 @@ def get_event(event_id: str):
 
 
 def get_events(query_options: QueryOptions, location: List[float] | None, sorting_options: SortingOptions):
+    # TODO refactor this into map
     Session = sessionmaker(bind=engine)
     with Session() as session:
         query = session.query(EventSchema)
@@ -42,9 +45,8 @@ def get_events(query_options: QueryOptions, location: List[float] | None, sortin
 
         if (location):
             point_wkb = WKTElement(convert_to_point(location), 0)
-            # TODO think abkout radius
             query = query.filter(func.ST_DFullyWithin(
-                EventSchema.location, point_wkb, 10))
+                EventSchema.location, point_wkb, default_query_radius))
 
         if sorting_options.date:
             query = query.order_by(
@@ -77,9 +79,7 @@ def delete_event(event_id: str, user_id: str):
 
 
 
-# TODO try to improve any
 def update_event(event_id: str, event_update_request: dict[str, any], user_id: str):
-    # TODO location dosent include 2 cells
     if ('location' in event_update_request):
         event_update_request["location"] = convert_to_point(
             event_update_request["location"])

@@ -1,0 +1,1 @@
+default_query_radius = 10
