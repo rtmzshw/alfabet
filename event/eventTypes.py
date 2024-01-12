@@ -1,13 +1,12 @@
 from datetime import datetime
 from pydantic import BaseModel, field_validator
-from typing import Annotated
 from typing import List, Union, Tuple
-from fastapi import Query
+from typing import TypedDict
 
 
-def validate_point(_, value: List[float]):
+def validate_point(value: List[float]):
     if len(value) < 2:
-        raise ValueError("location is a point of (x,y)")
+        raise ValueError("location is an array with two values")
     return value
 
 
@@ -24,7 +23,7 @@ class EventCreationRequest(BaseModel):
 class Event(EventCreationRequest):
     id: int
     creation_date: datetime
-    location: str
+    location: List[float]
 
 
 class EventUpdateRequest(EventCreationRequest):
@@ -48,6 +47,12 @@ class SortingOptions(BaseModel):
 
 
 class Id(BaseModel):
-    id: int
+    id:int
+
+
 class Ok(BaseModel):
     ok: bool
+
+
+class SubscriptionStatus(BaseModel):
+    status: str

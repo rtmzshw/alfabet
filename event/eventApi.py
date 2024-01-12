@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-from event.eventTypes import EventCreationRequest, EventUpdateRequest, QueryOptions, SortingOptions, Id, Event, Ok
+from event.eventTypes import EventCreationRequest, EventUpdateRequest, QueryOptions, SortingOptions, Id, Event, Ok, SubscriptionStatus
 from event.eventDal import add_event, get_event, delete_event, update_event, get_events as get_events_db
+from event.subscription.subscriptionDal import toggle_subscription
 from sqlalchemy.exc import IntegrityError
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -38,6 +39,7 @@ async def create_event(event: EventCreationRequest, request: Request):
         event_id = add_event(event, request.state.user_id)
         return {"id": event_id}
     except IntegrityError as e:
+        print(e)
         return JSONResponse(status_code=409, content={
             'detail': "Event already exist", })
 
@@ -76,7 +78,7 @@ async def update_event_by_id(event_id: str, eventUpdateRequest: EventUpdateReque
 
         if (is_filter_empty):
             raise HTTPException(status_code=400)
-
+        
         update_event(event_id, update_without_nones, request.state.user_id)
     except Unauthorized:
         raise HTTPException(status_code=401)
@@ -84,3 +86,15 @@ async def update_event_by_id(event_id: str, eventUpdateRequest: EventUpdateReque
         raise HTTPException(status_code=404)
 
     return {"ok": True}
+
+
+@app.post("/subscription/toggle/{event_id}", response_model=SubscriptionStatus, responses={**not_found})
+async def subscription(event_id, request: Request):
+    try:
+        status = toggle_subscription(request.state.user_id,event_id)
+        return {"status": status}
+    # event who dosent exist
+    except IntegrityError as e:
+        print(e)
+        return JSONResponse(status_code=404, content={
+            'detail': "event dosent exist", })

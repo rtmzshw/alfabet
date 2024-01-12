@@ -15,6 +15,8 @@ from errors import Unauthorized, NotFound
 from datetime import datetime, timedelta
 from notification.notificationLogic import calc_notification_timing
 from event.eventConfig import default_query_radius
+
+
 def add_event(event: EventCreationRequest, user_id: str):
     Session = sessionmaker(bind=engine)
     with Session() as session:
@@ -22,7 +24,8 @@ def add_event(event: EventCreationRequest, user_id: str):
                                       date=event.date, popularity=event.popularity, location=convert_to_point(event.location))
         session.add(event_to_create)
         # TODO: add description
-        notification = NotificationSchema(description="example: should be recived from user",date=calc_notification_timing(event.date), event_id=event_to_create.id)
+        notification = NotificationSchema(description="example: should be recived from user",
+                                          date=calc_notification_timing(event.date), event_id=event_to_create.id)
         session.add(notification)
         session.commit()
         return event_to_create.id
@@ -78,8 +81,7 @@ def delete_event(event_id: str, user_id: str):
         session.commit()
 
 
-
-def update_event(event_id: str, event_update_request: dict[str, any], user_id: str):
+def update_event(event_id: str, event_update_request: dict[str, any], user_id: int):
     if ('location' in event_update_request):
         event_update_request["location"] = convert_to_point(
             event_update_request["location"])
@@ -92,7 +94,7 @@ def update_event(event_id: str, event_update_request: dict[str, any], user_id: s
 
         if event.user_id != user_id:
             raise Unauthorized()
-
-        session.query(EventSchema).filter_by(
-            id=event_id).update(values=event_update_request)
+        for key in event_update_request:
+            setattr(event, key, event_update_request[key])
+            
         session.commit()

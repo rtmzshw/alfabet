@@ -7,6 +7,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from event.eventApi import app as event_app
 from utils import set_interval
 from notification.notificationLogic import register_notifications
+from event.eventListener import register_event_table_listeners
 app = FastAPI()
     
 event_app.add_middleware(BaseHTTPMiddleware, dispatch=authenticate)
@@ -16,6 +17,7 @@ app.mount("/event",event_app)
 app.mount("/user",user_app)
 
 register_notifications()
+register_event_table_listeners()
 
 if __name__ == "main":
     init_db()

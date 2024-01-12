@@ -41,6 +41,6 @@ async def authenticate(request: Request, call_next):
     if(not payload):
         return JSONResponse(status_code=401, content="Bad authorization token")
     
-    request.state.user_id = payload["user_id"]
+    request.state.user_id = int(payload["user_id"])
     response = await call_next(request)
     return response
