@@ -23,8 +23,7 @@ def add_event(event: EventCreationRequest, user_id: str):
         event_to_create = EventSchema(name=event.name, venue=event.venue, user_id=user_id,
                                       date=event.date, popularity=event.popularity, location=convert_to_point(event.location))
         session.add(event_to_create)
-        # TODO: add description
-        notification = NotificationSchema(description="example: should be recived from user",
+        notification = NotificationSchema(description="example: should be recived from user, due to time constraints its hardcoded",
                                           date=calc_notification_timing(event.date), event_id=event_to_create.id)
         session.add(notification)
         session.commit()
