@@ -1,6 +1,3 @@
-from pypika import Query, Table, Schema
-from event.eventSchema import EventSchema
-from event.eventTypes import Event, EventCreationRequest, EventUpdateRequest, SortingOptions, QueryOptions
 from postgrese import engine
 from sqlalchemy.orm import sessionmaker
 from utils import convert_to_point

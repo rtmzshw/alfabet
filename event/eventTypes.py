@@ -34,13 +34,9 @@ class EventUpdateRequest(EventCreationRequest):
     location: List[float] | None = None
 
     _validate_location = field_validator("location")(validate_point)
-
-
+    
 class QueryOptions(BaseModel):
     venue: str | None = None
-
-
-class SortingOptions(BaseModel):
     date: int | None = None
     popularity: int | None = None
     creation_time: int | None = None
