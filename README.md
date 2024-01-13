@@ -8,7 +8,7 @@ For viewing api documentation, naviage to:
 * user api -> http://localhost/user/docs
 * event api -> http://localhost/user/docs
 
-In order to access event api, you need to authenticate first (get the token from register api under users).
+In order to access event api, you need to authenticate first (get the token from signup api under users).
 
 ## architecture
 The entire codebase is encapsulated within a single service, using Python's FastAPI web server. \
