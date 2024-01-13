@@ -1,12 +1,23 @@
-# alfabet
+## Run
+* run -> ```docker pull postgis/postgis```
+* run -> ```docker build -t alfabet-app .```
+* run -> ```docker-compose up```
 
-docker pull postgres
-docker run --name my-pgadmin -p 5050:80 -e 'PGADMIN_DEFAULT_EMAIL=rtmzshw@gmail.com' -e 'PGADMIN_DEFAULT_PASSWORD=alfabet' -d dpage/pgadmin4
+## Interact
+For viewing api documentation, naviage to:
+* user api -> http://localhost/user/docs
+* event api -> http://localhost/user/docs
 
-<!-- docker run --net=my_network -d --name alfabet-postgres -p 5432:5432 -e POSTGRES_PASSWORD=alfabet postgis/postgis -->
-docker run -d --name alfabet-postgres -p 5432:5432 -e POSTGRES_PASSWORD=alfabet postgis/postgis
-<!-- docker run --net=my_network -d --name alfabet-app -p 8000:8000 -e db_host=localhost alfabet-app -->
-docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' alfabet-postgres
+In order to access event api, you need to authenticate first (get the token from register api under users).
 
+## architecture
+The entire codebase is encapsulated within a single service, using Python's FastAPI web server. \
+While the current implementation houses both user and event-related api's, it has been intentionally designed as seperated fastapi apps, what eases separation into two services in the future. \
+for storing data I used postgres, mainly because i know you work with it at the company and it will achive the work with no real effort.
 
-pytest
+## Test
+* run  ```pip install --no-cache-dir --upgrade -r /requirements.txt```
+* run  ```pytest```
+
+### personal note
+Prior to this exercise, I hadn't worked with PostgreSQL or Python, and the learning experience has been incredibly enriching. If there are any deviations from best practices in terms of language features or database queries, I appreciate your understanding and welcome any guidance or feedback. I really want to expand my knowledge in various technologies and completely enjoy the process.
