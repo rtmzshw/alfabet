@@ -17,6 +17,7 @@ for storing data I used postgres, mainly because i know you work with it at the 
 
 ## Test
 * run  ```pip install --no-cache-dir --upgrade -r /requirements.txt```
+* insure postgres image is running (from the docker-compose)
 * run  ```pytest```
 
 ### personal note
