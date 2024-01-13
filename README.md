@@ -2,6 +2,7 @@
 * run -> ```docker pull postgis/postgis```
 * run -> ```docker build -t alfabet-app .```
 * run -> ```docker-compose up```
+* give it a few seconds, it might fail (but restart automatically) a few times because Postgres needs to install extensions
 
 ## Interact
 For viewing api documentation, naviage to:
