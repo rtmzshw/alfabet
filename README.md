@@ -17,7 +17,7 @@ While the current implementation houses both user and event-related api's, it ha
 for storing data I used postgres, mainly because i know you work with it at the company and it will achive the work with no real effort.
 
 ## Test
-* run  ```pip install --no-cache-dir --upgrade -r /requirements.txt```
+* run  ```pip install --no-cache-dir --upgrade -r ./requirements.txt```
 * insure postgres image is running (from the docker-compose)
 * run  ```pytest```
 
